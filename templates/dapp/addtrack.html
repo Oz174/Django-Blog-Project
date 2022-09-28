@@ -1,0 +1,27 @@
+{% extends 'dapp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %} Add Track {% endblock %}
+</head>
+
+<body>
+    {% block main %}
+    <center>
+        {% block header %}
+        <h1> Add Track Form </h1>
+        {% endblock %}
+        <form method="POST">
+            {{track_form.as_p}}
+            {% csrf_token %}
+            <button type="submit" class="fcc-btn"> Add Track</button>
+        </form>
+    </center>
+    {% endblock %}
+</body>
+
+</html>

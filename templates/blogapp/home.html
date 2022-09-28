@@ -1,0 +1,64 @@
+{% extends 'blogapp/base.html' %}
+{% load static %}
+
+
+{% block title %} Home {% endblock %}
+
+{% block header %}
+{% if messages %}
+					<ul class="messages" style="color: red ;">
+						{% for message in messages %}
+						<p id="messages" style="color:red"><strong> {{message}} </strong></p>
+						{% endfor %}
+					</ul>
+					{% endif %}
+{% endblock %}
+
+{%block content %} 
+<div class="list-group list-group-flush">
+  {% for category in categories %}
+  <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'category_posts' category.id %}">{{category.cname}}</a>
+  {% if request.user not in category.users.all %}
+  <a class="list-group-item list-group-item-action" href="{% url 'subscribe' category.id %}"> <i class="fa-regular fa-bell"></i> Subscribe </a>
+  {% else %}
+  <a class="list-group-item list-group-item-action" style="color: red ;" href="{% url 'unsubscribe' category.id %}"> <i class="fa-solid fa-bell"></i> Unsubscribe  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
+
+{%block main%} 
+
+
+{% for post in page_obj %}
+
+<div class="card" style="width: 15rem;">
+  <img src="{{ post.post_pic.url }}" class="card-img-top" alt="AOT">
+  <div class="card-body">
+    <h5 class="card-title">{{post.title}}</h5>
+    <p class="card-text">{{post.author}} <br> {{post.createdAt}}</p>
+    <a href="{% url 'post' post.id %}" class="btn btn-primary">Details</a>
+  </div>
+</div>
+
+{% endfor %}
+{% endblock %}
+
+{% block footer %}
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+      {% endif %}
+
+      
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.number }}"> <u> {{ page_obj.number }} </u> </a></li>
+
+      {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}"> {{ page_obj.next_page_number }} </a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"> Last </a></li>
+      {% endif %}
+    </ul>
+</nav>
+{% endblock %}

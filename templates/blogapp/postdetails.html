@@ -1,0 +1,93 @@
+{% extends 'blogapp/base.html' %}
+{% load static %}
+{% load profanity %}
+{% block title %} Details {% endblock %}
+
+
+{%block content %} 
+<div class="list-group list-group-flush">
+  {% for category in categories %}
+  <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'category_posts' category.id %}">{{category.cname}}</a>
+  {% if request.user not in category.users.all %}
+  <a class="list-group-item list-group-item-action" href="{% url 'subscribe' category.id %}"> <i class="fa-regular fa-bell"></i> Subscribe </a>
+  {% else %}
+  <a class="list-group-item list-group-item-action" style="color: red ;" href="{% url 'unsubscribe' category.id %}"> <i class="fa-solid fa-bell"></i> Unsubscribe  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
+
+{%block main%} 
+<div class="card" style="width: 50rem;">
+  <img src="{{post.post_pic.url}}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h2 class="card-title">{{post.title|censor}}</h2> <br>
+    <p class="card-text"> <strong> 
+      {{ post.content|censor }}
+       </strong> </p> <br> <br> <br> 
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{{post.author}}</li>
+    <li class="list-group-item">{{post.createdAt}}</li>
+    <li class="list-group-item"> Tags Found : {{post.Tag|censor}}</li>
+    {% if user.is_authenticated and post.author == user or user.is_superuser %}
+    <li class="list-group-item"> <a class="btn btn-success"  href="{% url 'edit_post' post.id %}" role="button" >Edit Post </a>
+      <a class="btn btn-danger" href="{% url 'delete_post' post.id %}" role="button"> Delete Post  </a> </li>
+      {% endif %}
+      {% if user.is_authenticated %}
+    <li class="list-group-item"> <a class="btn btn-primary"  href="{% url 'like' post.id %}" role="button" > <i class="fa-solid fa-thumbs-up"></i>  Like </a> {{likes}} 
+    <a class="btn btn-danger" href="{% url 'dislike' post.id %}" role="button"> <i class="fa-solid fa-thumbs-down"> </i> Dislike </a> {{dislikes}} </li>
+      {% else %}
+      <li class="list-group-item"> <a class="btn btn-primary disabled"  role="button" > <i class="fa-solid fa-thumbs-up"></i> Like </a> {{likes}} 
+        <a class="btn btn-danger disabled" role="button"> <i class="fa-solid fa-thumbs-down"> </i> Dislike </a> {{dislikes}} </li>
+      {% endif %}
+      </ul>
+  <div class="card-body" style="border-color:blueviolet;">
+    {% if user.is_authenticated %}
+    <form method="POST">
+      {% csrf_token %}
+      {{c_form.as_p}}
+      <button type="submit" class="fcc-btn"> comment </button>
+    </form>
+    {% endif %}
+
+
+    {% for comment in comments %}
+    <blockquote style="border-color: violet ;">
+    <h4> {{comment.commented_by}}:</h4>
+    <h5> <small> {{comment.createdAt}} </small> </h5>
+    <p> {{ comment.bodytext|censor }}</p>
+     <br>
+     {%if user.is_staff or comment.commented_by.username == user.username or comment.post_id.author == user %}
+     <a href="{%url 'delete_comment' comment.id %}"> Delete </a>
+     {% endif %}
+     <br>
+   
+     {% for child_comment in comment.children %}
+      <blockquote>
+      <p> {{ child_comment.bodytext|censor }} </p>
+      </blockquote>
+     {% endfor %}
+
+     {%if user.is_authenticated %}
+     
+     <form method="POST">
+      {% csrf_token %}
+      {{c_form.as_p}}
+      <input type="hidden" name="parent_id" value="{{comment.id}}"> 
+      <button type="submit" class="fcc-btn"> reply </button>
+     </hr>
+    </form>
+    </blockquote>
+     {% endif %}
+
+    {% endfor %}
+
+  </div>
+</div>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+
+
+

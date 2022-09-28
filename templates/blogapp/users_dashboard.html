@@ -1,0 +1,68 @@
+{% extends 'blogapp/base.html' %}
+
+
+    {% block title %} All Users {% endblock %}
+
+
+    {% block header %}
+    <h1> Django Blog Users Dashboard </h1>
+    {% endblock %}
+    {% block main %}
+    <div>
+        <table class="table-light">
+            <tr class="table-light">
+                <th class="table-light">Username</th>
+                <th class="table-light">Email</th>
+                <th class="table-light">Promote/Unpromote</th>
+                <th class="table-light">Lock/Unlock</th>
+            </tr>
+            {% for u in page_obj %}
+            {% if u.username == request.user.username %}
+            <tr class="table-danger" style="background-color: red;">
+                <td class="table-danger"> {{ u.username }}</td>
+                <td class="table-danger"> {{ u.email }}</td>
+                <td class="table-danger"> </td>
+                <td class="table-danger"> </td>
+            </tr>
+            {% else %}
+            <tr class="table-light">
+                <td class="table-light"> {{ u.username }} </td>
+                <td class="table-light"> {{ u.email }} </td>
+                {% if not u.is_superuser %}
+                <td class="table-light"><a href="{% url 'promote' u.id %}" style="text-decoration:none;"> <i class="fa-solid fa-crown"></i> Promote</a></td>
+                {% if u.is_active %}
+                <td class="table-light"><a href="{% url 'lock'  u.id %}" style="text-decoration:none;"> <i class="fa-solid fa-lock"></i> Lock </a></td>
+                {% else %}
+                <td class="table-light"><a href="{% url 'unlock'  u.id %}" style="text-decoration:none;"> <i class="fa-solid fa-unlock"></i> Unlock</a></td>
+                {% endif %}
+                {% else %}
+                <td class="table-light"> </td>
+                <td class="table-light"> </td>
+                {% endif %}               
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+        <p style="display:center"> If you want more details you can head to django admin panel , 
+            <a href="{%url 'to_django_admin' %}"> Head to Django Admin Panel ? </a>
+            </p>
+    </div>
+    {% endblock %}
+    {% block footer %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+          {% endif %}
+    
+          
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.number }}"> <u> {{ page_obj.number }} </u> </a></li>
+    
+          {% if page_obj.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}"> {{ page_obj.next_page_number }} </a></li>
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"> Last </a></li>
+          {% endif %}
+        </ul>
+    </nav>
+    {% endblock %}

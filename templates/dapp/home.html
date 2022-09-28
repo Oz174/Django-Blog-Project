@@ -1,0 +1,72 @@
+{% extends 'dapp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% block title %} Home Page {% endblock %}
+</head>
+
+<body>
+  {% block header %}
+  <h1> Students and Tracks</h1>
+  {% endblock %}
+  {% block main %}
+    <a href="/dapp/add/" class="btn btn-primary"> Add New Student </a>
+    <a href="/dapp/addtrack/" class="btn btn-primary"> Add New Track </a>
+    <br> <br>
+    <h1> Hello {{ request.user.username }} </h1>
+    <br>
+  <div>
+    <table class= "table table-success table-striped">
+      <tr class="table-primary">
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Track</th>
+        <th>Update</th>
+        <th>Student Details </th>
+        <th>Delete</th>
+      </tr>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.fname }}</td>
+        <td>{{ student.lname }}</td>
+        <td>{{ student.age }}</td>
+        <td>{{ student.student_track }}</td>
+        <td><a href="{% url 'update'  student.id %}"> Update </a></td>
+        <td><a href="{% url 'details' student.id %}"> Details </a></td>
+        <td><a href="{% url 'delete' student.id %}"> Delete </a></td>
+
+      </tr>
+      {% endfor%}
+
+    </table>
+  </div>
+
+  <div>
+    <table class= "table table-success table-striped">
+      <tr>
+        <th>Track ID</th>
+        <th>Track Name</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
+      {% for track in tracks %}
+      <tr>
+        <td> {{track.id}} </td>
+        <td> {{ track.tname }}</td>
+        <td><a href="{% url 'update_track' track.id %}"> Update </a></td>
+        <td><a href="{% url 'delete_track' track.id %}"> Delete </a></td>
+      </tr>
+      {% endfor%}
+    </table>
+  </div>
+  {% endblock %}
+  {% block footer %}
+  {% endblock %}
+</body>
+
+</html>

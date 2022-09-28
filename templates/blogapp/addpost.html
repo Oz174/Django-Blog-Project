@@ -1,0 +1,19 @@
+{% extends 'blogapp/base.html' %}
+{% load profanity %}
+
+    
+    {% block main %}
+    <center>
+        {% block title %}
+        Add Post
+        {% endblock %}
+        <form method="POST" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="fcc-btn"> Post </button>
+        </form>
+    </center>
+    {% endblock %}
+
+    {% block footer %}
+    {% endblock %}
